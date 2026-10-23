@@ -1,0 +1,12 @@
+# Copy to local.properties (git-ignored) and edit.
+# Android Studio fills sdk.dir automatically when you open the project.
+sdk.dir=C\:\\Users\\YOU\\AppData\\Local\\Android\\Sdk
+
+# Your app identity (change these before you ship)
+shell.appId=dev.firetvwebshell.demo
+shell.appName=Web Shell
+
+# Debug builds load this: your laptop's LAN IP + dev server port (Vite: 5173)
+shell.devUrl=http://192.168.1.10:3000/example/
+# Release builds load this (HTTPS)
+shell.releaseUrl=https://example.com/

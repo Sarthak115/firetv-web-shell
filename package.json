@@ -1,0 +1,17 @@
+{
+  "name": "firetv-web-shell",
+  "version": "1.0.0",
+  "description": "Ship any web app to Fire TV: a Kotlin WebView shell + dependency-free D-pad focus helpers.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p web/tsconfig.json",
+    "serve": "node tools/serve.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "react": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

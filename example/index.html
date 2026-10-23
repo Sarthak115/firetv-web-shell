@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire TV Web Shell — example</title>
+    <style>
+      :root {
+        --bg: #101828;
+        --bg-2: #1d2a52;
+        --text: #f5f1e8;
+        --dim: #b9b2a3;
+        --accent: #ff9f1c;
+      }
+      html, body { margin: 0; height: 100%; background: var(--bg); }
+      /* Design at 1920x1080 and scale to the WebView (often 960x540 CSS px on a stick). */
+      .stage {
+        position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        transform-origin: 0 0; box-sizing: border-box; padding: 54px 96px; /* 5% overscan */
+        display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 56px;
+        background: radial-gradient(ellipse at top left, var(--bg-2), var(--bg) 70%);
+        color: var(--text); font: 48px system-ui, sans-serif; text-align: center;
+      }
+      h1 { font-size: 96px; margin: 0; }
+      .sub { color: var(--dim); }
+      .row { display: flex; gap: 64px; }
+      button {
+        min-width: 420px; min-height: 160px; border-radius: 32px; border: 6px solid transparent;
+        background: rgba(245, 241, 232, 0.12); color: var(--text); font: 700 56px system-ui, sans-serif;
+        outline: none; transition: transform 120ms, box-shadow 120ms;
+      }
+      /* Style data-focused, not :focus — the ring must always be visible. */
+      button[data-focused='true'] {
+        border-color: var(--accent); background: rgba(255, 159, 28, 0.28);
+        transform: scale(1.08); box-shadow: 0 0 48px 8px rgba(255, 159, 28, 0.5);
+      }
+      .count { font-size: 140px; font-weight: 800; color: var(--accent); line-height: 1; }
+      .debug { position: absolute; left: 96px; bottom: 40px; font: 32px monospace; color: var(--dim); text-align: left; }
+      .toast {
+        position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+        background: var(--accent); color: #101828; font-weight: 800; padding: 24px 64px; border-radius: 999px;
+        opacity: 0; transition: opacity 200ms;
+      }
+      .toast.on { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <h1>Hello, Fire TV 👋</h1>
+      <div class="sub">This is a plain web page running inside firetv-web-shell.</div>
+      <div class="count" id="count">0</div>
+      <div class="row" id="menu">
+        <button data-focus="speak">🔊 Say hello</button>
+        <button data-focus="count">➕ Count</button>
+        <button data-focus="exit">🚪 Exit</button>
+      </div>
+      <div class="sub">◀ ▶ move · OK selects · Back twice exits</div>
+      <div class="debug" id="debug"></div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <script type="module">
+      import { createFocusGroup } from '../web/dist/focus.js';
+      import { speak, exitApp, onBack, isOnTv, ttsLanguages } from '../web/dist/native.js';
+
+      const $ = (id) => document.getElementById(id);
+      let count = 0;
+      let lastKey = '—';
+
+      // Fit the 1920x1080 stage to whatever the WebView reports.
+      const fit = () => ($('stage').style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`);
+      addEventListener('resize', fit);
+      fit();
+
+      const toast = (text) => {
+        $('toast').textContent = text;
+        $('toast').classList.add('on');
+        clearTimeout(toast.t);
+        toast.t = setTimeout(() => $('toast').classList.remove('on'), 2500);
+      };
+
+      createFocusGroup($('menu'), {
+        layout: 'row',
+        onSelect(id) {
+          if (id === 'speak') speak('Hello from your Fire TV web shell!', 'en-US');
+          if (id === 'count') $('count').textContent = String(++count);
+          if (id === 'exit') exitApp();
+        },
+      });
+
+      // Back: a first press warns, a second within 3 s exits (no accidental exits).
+      let lastBack = 0;
+      onBack(() => {
+        lastKey = 'Back';
+        if (Date.now() - lastBack < 3000) return exitApp();
+        lastBack = Date.now();
+        toast('Press Back again to exit');
+        render();
+      });
+
+      addEventListener('keydown', (e) => {
+        lastKey = `${e.key} (${e.keyCode})`;
+        render();
+      });
+
+      function render() {
+        $('debug').textContent = `key: ${lastKey} · on TV: ${isOnTv() ? 'yes' : 'no'} · tts: ${ttsLanguages().join(', ') || '…'}`;
+      }
+      render();
+      setTimeout(render, 2500); // TTS engine finishes initialising after page load
+      console.log('example loaded, on TV:', isOnTv());
+    </script>
+  </body>
+</html>
