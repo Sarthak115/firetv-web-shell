@@ -1,6 +1,6 @@
 /**
  * useFocusGroup — the same D-pad focus model as focus.ts, as a React hook.
- * Only peer dependency: React 17+. Extracted from NaniTV (https://github.com/<you>/nanitv).
+ * Only peer dependency: React 17+. Extracted from NaniTV (https://github.com/sarthak115/nanitv).
  *
  *   const { bind } = useFocusGroup(['ok', 'messages', 'help'], { onSelect });
  *   <button {...bind('ok')}>I'm OK</button>

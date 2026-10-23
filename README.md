@@ -1,6 +1,6 @@
 # firetv-web-shell
 
-**Ship any web app to Fire TV in 5 minutes.** A tiny Kotlin WebView shell plus dependency-free D-pad focus helpers, extracted from [NaniTV](https://github.com/<you>/nanitv) (built for the Amazon "Build, Ship, Shape" hackathon, Fire TV track).
+**Ship any web app to Fire TV in 5 minutes.** A tiny Kotlin WebView shell plus dependency-free D-pad focus helpers, extracted from [NaniTV](https://github.com/sarthak115/nanitv) (built for the Amazon "Build, Ship, Shape" hackathon, Fire TV track).
 
 ![The example page running on a Fire TV Stick, driven by the remote](docs/demo.gif)
 
@@ -36,7 +36,7 @@ You need: a Fire TV with **ADB debugging** on, a computer on the same Wi-Fi with
 
 **2. Clone and serve the example**
 ```bash
-git clone https://github.com/<you>/firetv-web-shell
+git clone https://github.com/sarthak115/firetv-web-shell
 cd firetv-web-shell
 node tools/serve.mjs
 ```
