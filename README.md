@@ -52,7 +52,7 @@ Edit `local.properties`: set `sdk.dir` (Android Studio fills it in if you open t
 **4. Build, install, launch**
 ```bash
 adb connect <FIRE_TV_IP>:5555        # first time: accept the prompt ON THE TV
-./gradlew assembleDebug              # Windows: gradlew.bat assembleDebug
+./gradlew assembleDebug              # Windows PowerShell: .\gradlew.bat assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n dev.firetvwebshell.demo/dev.firetvwebshell.MainActivity
 ```
@@ -112,7 +112,7 @@ function Home({ onOk, onMessages, onHelp }) {
 One focus group per screen keeps navigation predictable. Pass `enabled: false` to a group while another screen or dialog owns the keys.
 
 ### TV design tips that worked for us
-- Design on a fixed **1920×1080** stage and `transform: scale()` it to the WebView size (often 960×540 CSS px on a stick). Keep 5% padding for overscan.
+- Design on a fixed **1920×1080** stage and `transform: scale()` it to the WebView size (often 960×540 CSS px on a stick). Keep 5% padding for overscan. Give `html, body` `overflow: hidden` and measure `document.documentElement.clientWidth`: an overflowing stage makes `innerWidth` report 1920 in the shell's wide-viewport mode.
 - **At most 3 focusable buttons per screen**, at least 360×140 px, with text ≥ 48 px if the viewer is 3 m away.
 - Make Back always do something sensible, and require **two presses to exit** from your home screen.
 - Show the focus with a thick outline + scale + glow, and never let focus disappear.

@@ -12,7 +12,9 @@
         --dim: #b9b2a3;
         --accent: #ff9f1c;
       }
-      html, body { margin: 0; height: 100%; background: var(--bg); }
+      /* overflow:hidden matters: otherwise the 1920px stage widens the WebView's layout viewport
+         (innerWidth becomes 1920) and the scale-to-fit below computes 1. */
+      html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
       /* Design at 1920x1080 and scale to the WebView (often 960x540 CSS px on a stick). */
       .stage {
         position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
@@ -37,7 +39,7 @@
       .count { font-size: 140px; font-weight: 800; color: var(--accent); line-height: 1; }
       .debug { position: absolute; left: 96px; bottom: 40px; font: 32px monospace; color: var(--dim); text-align: left; }
       .toast {
-        position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+        position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
         background: var(--accent); color: #101828; font-weight: 800; padding: 24px 64px; border-radius: 999px;
         opacity: 0; transition: opacity 200ms;
       }
@@ -67,8 +69,11 @@
       let count = 0;
       let lastKey = '—';
 
-      // Fit the 1920x1080 stage to whatever the WebView reports.
-      const fit = () => ($('stage').style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`);
+      // Fit the 1920x1080 stage to the WebView (clientWidth = the real viewport, 960 on a 1080p stick).
+      const fit = () => {
+        const { clientWidth: w, clientHeight: h } = document.documentElement;
+        $('stage').style.transform = `scale(${Math.min(w / 1920, h / 1080)})`;
+      };
       addEventListener('resize', fit);
       fit();
 
